@@ -12,6 +12,7 @@ RUN corepack pnpm install --frozen-lockfile
 FROM base AS builder
 COPY . .
 RUN corepack pnpm --filter api build
+ENV DOCKER_BUILD=1
 RUN corepack pnpm --filter web build
 
 FROM node:24-alpine AS api

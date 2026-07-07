@@ -2,7 +2,8 @@ import path from "node:path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // Standalone is for Docker only. Vercel uses its own Next.js output pipeline.
+  ...(process.env.DOCKER_BUILD === "1" ? { output: "standalone" as const } : {}),
   turbopack: {
     root: path.join(__dirname, "../.."),
   },

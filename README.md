@@ -170,7 +170,6 @@ GrowEasy Assesment/
 │   └── web/          # Next.js 16 frontend
 ├── Dockerfile        # Multi-stage: api + web targets
 ├── docker-compose.yml
-├── vercel.json
 ├── apps/web/vercel.json
 ├── railway.json
 ├── pnpm-workspace.yaml
@@ -521,33 +520,24 @@ Expected response:
 
 ### 3. Deploy frontend on Vercel
 
-You can deploy in **either** of these ways. If you already created a Vercel project, try **Option A** first (no Root Directory change needed).
-
-#### Option A — Deploy from repo root (recommended if you see "No Next.js detected")
-
-Leave **Root Directory** empty (repo root). The root `vercel.json` tells Vercel to build `apps/web`:
-
-| Setting | Value |
-|---|---|
-| **Framework Preset** | `Next.js` (or `Other` — root `vercel.json` handles the build) |
-| **Root Directory** | *(leave empty)* |
-| **Install Command** | *(auto from root `vercel.json`)* |
-| **Build Command** | *(auto from root `vercel.json`)* |
-
-#### Option B — Deploy from `apps/web` subdirectory
+1. Go to [https://vercel.com](https://vercel.com) and import your GitHub repo
+2. Use these settings in **Settings → Build and Deployment**:
 
 | Setting | Value |
 |---|---|
 | **Framework Preset** | `Next.js` |
 | **Root Directory** | `apps/web` |
+| **Output Directory** | *(leave empty — do NOT set `public`)* |
 | **Install Command** | `cd ../.. && corepack enable && corepack pnpm install --frozen-lockfile` |
 | **Build Command** | `next build` |
 
-Also enable **Settings → Build and Deployment → Include source files outside of the Root Directory**.
+3. Enable **Include source files outside of the Root Directory** (needed for the pnpm monorepo lockfile at repo root).
 
-> If Root Directory is left at repo root **without** the root `vercel.json`, Vercel reads the root `package.json` (which has no `next` dependency path to your app) and fails with **"No Next.js version detected"**.
+4. Turn **OFF** any override toggle that forces Output Directory to `public` — that causes the `"No Output Directory named public"` error. Next.js on Vercel does not use `public` as the build output folder.
 
-3. Add environment variables — pick **one** approach:
+> `apps/web/vercel.json` in the repo contains the same install/build commands. If dashboard overrides are disabled, Vercel reads them automatically.
+
+5. Add environment variables — pick **one** approach:
 
 **Option A — Direct API URL (recommended with Render)**
 
