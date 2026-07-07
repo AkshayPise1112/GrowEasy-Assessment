@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "corepack pnpm -r --parallel dev",
     "build": "corepack pnpm -r build",
+    "build:web": "corepack pnpm --filter web build",
     "lint": "corepack pnpm -r lint",
     "test": "corepack pnpm -r test",
     "typecheck": "corepack pnpm -r typecheck",
