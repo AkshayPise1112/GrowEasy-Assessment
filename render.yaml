@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: groweasy-api
+    runtime: node
+    plan: free
+    buildCommand: corepack enable && corepack pnpm install --frozen-lockfile && corepack pnpm --filter api build
+    startCommand: corepack pnpm --filter api start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: WEB_ORIGIN
+        sync: false

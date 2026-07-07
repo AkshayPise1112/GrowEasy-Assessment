@@ -435,34 +435,156 @@ The root `Dockerfile` contains separate `api` and `web` build targets used by `d
 
 ## Deployment
 
-### Vercel (frontend)
+Recommended setup:
+- **Frontend:** Vercel (free)
+- **Backend:** Render (free tier)
 
-1. Create a Vercel project from this repository
-2. Use the included `vercel.json` or set root directory to `apps/web`
-3. Set environment variable:
-   - `NEXT_PUBLIC_API_BASE_URL=https://<your-railway-api-domain>`
+### 1. Push code to GitHub
 
-### Railway (backend)
-
-1. Create a Railway service from this repository
-2. Build command: `corepack pnpm install --frozen-lockfile && corepack pnpm --filter api build`
-3. Start command: `corepack pnpm --filter api start`
-4. Set environment variables:
-   - `GEMINI_API_KEY`
-   - `GEMINI_MODEL` (optional)
-   - `GROQ_API_KEY` (optional)
-   - `GROQ_MODEL` (optional)
-   - `WEB_ORIGIN=https://<your-vercel-domain>`
-   - `PORT=4000`
-
-### GitHub (submission)
+Your backend and frontend deploy from the same GitHub repository.
 
 ```bash
-git init
-git add .
-git commit -m "Initial commit: GrowEasy AI CSV Importer"
 git remote add origin https://github.com/<your-username>/<your-repo>.git
 git push -u origin main
+```
+
+### 2. Deploy backend on Render (free tier)
+
+#### Option A — Blueprint (easiest)
+
+1. Go to [https://dashboard.render.com](https://dashboard.render.com) and sign in with GitHub
+2. Click **New +** → **Blueprint**
+3. Connect your GitHub repository
+4. Render detects `render.yaml` and creates the `groweasy-api` web service
+5. When prompted, enter secret values:
+   - `GEMINI_API_KEY` — your Gemini API key
+   - `WEB_ORIGIN` — your Vercel frontend URL (set this after step 3, then redeploy)
+   - `GROQ_API_KEY` — optional fallback key
+6. Click **Apply**
+
+#### Option B — Manual web service
+
+1. Go to [https://dashboard.render.com](https://dashboard.render.com)
+2. **New +** → **Web Service**
+3. Connect your GitHub repo
+4. Use these settings:
+
+| Setting | Value |
+|---|---|
+| **Name** | `groweasy-api` |
+| **Region** | Closest to you |
+| **Branch** | `main` |
+| **Root Directory** | *(leave blank — repo root)* |
+| **Runtime** | Node |
+| **Build Command** | `corepack enable && corepack pnpm install --frozen-lockfile && corepack pnpm --filter api build` |
+| **Start Command** | `corepack pnpm --filter api start` |
+| **Plan** | Free |
+
+5. Add **Environment Variables**:
+
+| Variable | Value |
+|---|---|
+| `NODE_ENV` | `production` |
+| `GEMINI_API_KEY` | Your Gemini API key |
+| `GEMINI_MODEL` | `gemini-2.5-flash` |
+| `GROQ_API_KEY` | *(optional)* |
+| `GROQ_MODEL` | `llama-3.3-70b-versatile` |
+| `WEB_ORIGIN` | `https://<your-vercel-app>.vercel.app` |
+
+> **Do not set `PORT` manually.** Render injects `PORT` automatically and the API reads it.
+
+6. Under **Advanced**, set **Health Check Path** to `/health`
+7. Click **Create Web Service**
+
+After deploy, copy your Render URL, e.g.:
+
+`https://groweasy-api.onrender.com`
+
+Test it:
+
+```bash
+curl https://groweasy-api.onrender.com/health
+```
+
+Expected response:
+
+```json
+{"status":"ok"}
+```
+
+#### Render free tier notes
+
+- Services **spin down after ~15 minutes of inactivity**. The first request after idle can take **30–60 seconds** (cold start).
+- For a demo/submission this is fine; mention it if reviewers test after a long pause.
+- If imports time out on cold start, hit `/health` once in the browser, wait for `ok`, then retry the CSV import.
+
+### 3. Deploy frontend on Vercel
+
+1. Go to [https://vercel.com](https://vercel.com) and import your GitHub repo
+2. Use these settings:
+
+| Setting | Value |
+|---|---|
+| **Framework** | Next.js |
+| **Root Directory** | `/` (repo root) |
+| **Install Command** | `corepack pnpm install --frozen-lockfile` |
+| **Build Command** | `corepack pnpm --filter web build` |
+
+3. Add environment variables — pick **one** approach:
+
+**Option A — Direct API URL (recommended with Render)**
+
+| Variable | Value |
+|---|---|
+| `NEXT_PUBLIC_API_BASE_URL` | `https://groweasy-api.onrender.com` |
+
+**Option B — Proxy through Vercel**
+
+| Variable | Value |
+|---|---|
+| `NEXT_PUBLIC_API_BASE_URL` | *(leave empty)* |
+| `API_PROXY_URL` | `https://groweasy-api.onrender.com` |
+
+4. Deploy and copy your Vercel URL, e.g. `https://groweasy-csv-importer.vercel.app`
+
+### 4. Connect frontend and backend
+
+Go back to **Render → your service → Environment** and set:
+
+```
+WEB_ORIGIN=https://<your-vercel-app>.vercel.app
+```
+
+Click **Save Changes** (Render will redeploy automatically).
+
+`WEB_ORIGIN` must match your Vercel URL exactly — no trailing slash.
+
+### 5. Verify end-to-end
+
+1. Open your Vercel URL
+2. Upload a CSV and confirm the preview loads
+3. Click **Upload File** and wait for AI processing
+4. Check imported/skipped results on **Manage Leads**
+
+If you see **"Could not reach the API"**:
+- Confirm Render `/health` returns `{"status":"ok"}`
+- Confirm `NEXT_PUBLIC_API_BASE_URL` points to your Render URL
+- Confirm `WEB_ORIGIN` on Render matches your Vercel domain
+- If the service was idle, wait for the cold start to finish and retry
+
+### Alternative: Railway (backend)
+
+Railway also works if you prefer it over Render. Use `railway.json` in the repo root and set the same environment variables (`GEMINI_API_KEY`, `WEB_ORIGIN`, etc.).
+
+### Submission URLs
+
+Add these to the top of this README after deploying:
+
+```markdown
+## Live Demo
+- App: https://<your-vercel-app>.vercel.app
+- API: https://<your-render-app>.onrender.com/health
+- Repository: https://github.com/<your-username>/<your-repo>
 ```
 
 ---
