@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #162123;
+  --muted-foreground: #65767a;
+  --page-background: #f4f7f6;
+  --sidebar-background: #ffffff;
+  --card-background: #ffffff;
+  --card-border: rgba(17, 24, 39, 0.08);
+  --accent: #ddfff1;
+  --accent-strong: #1d8d66;
+  --primary: #ff7a59;
+  --primary-foreground: #ffffff;
+  --table-header: #f8faf9;
+  --elevated: #ffffff;
+  --brand: #0f2b2b;
+  --badge-neutral: #edf1f1;
+  --badge-success: #dff7ea;
+  --badge-success-text: #198754;
+  --badge-warning: #fff2db;
+  --badge-warning-text: #8f5d08;
+  --badge-danger: #fee7e2;
+  --badge-danger-text: #b54708;
+  --badge-info: #dbeafe;
+  --badge-info-text: #1d4ed8;
+  --modal-backdrop: rgba(0, 0, 0, 0.4);
+  --shadow-color: rgba(15, 43, 43, 0.08);
+  --scrollbar-thumb: rgba(119, 136, 153, 0.45);
+}
+
+.dark {
+  --background: #0f1419;
+  --foreground: #e8ecef;
+  --muted-foreground: #8b9aab;
+  --page-background: #080c10;
+  --sidebar-background: #111820;
+  --card-background: #151d27;
+  --card-border: rgba(255, 255, 255, 0.08);
+  --accent: #0d2e24;
+  --accent-strong: #3ecf9a;
+  --primary: #ff8a6f;
+  --primary-foreground: #ffffff;
+  --table-header: #1a2330;
+  --elevated: #1c2634;
+  --brand: #1a3d3d;
+  --badge-neutral: #243040;
+  --badge-success: #143d2e;
+  --badge-success-text: #4ade80;
+  --badge-warning: #3d3018;
+  --badge-warning-text: #fbbf24;
+  --badge-danger: #3d1f18;
+  --badge-danger-text: #fb923c;
+  --badge-info: #1e3a5f;
+  --badge-info-text: #60a5fa;
+  --modal-backdrop: rgba(0, 0, 0, 0.65);
+  --shadow-color: rgba(0, 0, 0, 0.4);
+  --scrollbar-thumb: rgba(139, 154, 171, 0.35);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background: var(--page-background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+.thin-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.card-surface {
+  background: var(--card-background);
+  border: 1px solid var(--card-border);
+}
+
+.shadow-card {
+  box-shadow: 0 1px 3px var(--shadow-color);
+}

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "deploy": {
+    "startCommand": "corepack pnpm --filter api start",
+    "restartPolicyType": "on_failure",
+    "restartPolicyMaxRetries": 10
+  },
+  "build": {
+    "buildCommand": "corepack pnpm install --frozen-lockfile && corepack pnpm --filter api build"
+  }
+}
