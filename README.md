@@ -170,7 +170,7 @@ GrowEasy Assesment/
 │   └── web/          # Next.js 16 frontend
 ├── Dockerfile        # Multi-stage: api + web targets
 ├── docker-compose.yml
-├── vercel.json
+├── apps/web/vercel.json
 ├── railway.json
 ├── pnpm-workspace.yaml
 └── tsconfig.base.json
@@ -525,10 +525,12 @@ Expected response:
 
 | Setting | Value |
 |---|---|
-| **Framework** | Next.js |
-| **Root Directory** | `/` (repo root) |
-| **Install Command** | `corepack pnpm install --frozen-lockfile` |
-| **Build Command** | `corepack pnpm --filter web build` |
+| **Framework Preset** | `Next.js` |
+| **Root Directory** | `apps/web` |
+| **Install Command** | *(auto from `apps/web/vercel.json`)* |
+| **Build Command** | *(auto from `apps/web/vercel.json`)* |
+
+> **Important:** Root Directory must be `apps/web`. If you leave it at the repo root, Vercel won't find `next` in `package.json` and the build will fail.
 
 3. Add environment variables — pick **one** approach:
 
