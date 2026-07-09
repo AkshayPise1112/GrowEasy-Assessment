@@ -212,15 +212,17 @@ export async function extractBatch(batch: ImportCandidate[]): Promise<ExtractedC
 
   return pRetry(
     async () => {
-      try {
-        return await extractWithGemini(batch);
-      } catch (geminiError) {
-        if (!groqClient) {
-          throw geminiError;
+      if (groqClient) {
+        try {
+          return await extractWithGroq(batch);
+        } catch (groqError) {
+          if (!geminiClient) {
+            throw groqError;
+          }
         }
-
-        return extractWithGroq(batch);
       }
+
+      return extractWithGemini(batch);
     },
     {
       retries: 2,

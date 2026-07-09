@@ -31,7 +31,7 @@ const emptySummary: ImportSummary = {
 
 export function ImporterDashboard() {
   const [activePage, setActivePage] = useState<Page>("lead-sources");
-  const [modalOpen, setModalOpen] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const [file, setFile] = useState<File | null>(null);
   const [columns, setColumns] = useState<string[]>([]);

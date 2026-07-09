@@ -1,3 +1,5 @@
+import Script from "next/script";
+
 import { THEME_STORAGE_KEY } from "@/lib/theme";
 
 const themeScript = `
@@ -13,5 +15,11 @@ const themeScript = `
 `.trim();
 
 export function ThemeScript() {
-  return <script dangerouslySetInnerHTML={{ __html: themeScript }} />;
+  return (
+    <Script
+      id="groweasy-theme-init"
+      strategy="beforeInteractive"
+      dangerouslySetInnerHTML={{ __html: themeScript }}
+    />
+  );
 }
